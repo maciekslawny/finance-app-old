@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Document</title>
+</head>
+<body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav m-auto">
+              <a class="nav-link" aria-current="page" href="#">Zestawienie</a>
+              <a class="nav-link" href="#">Aktywa</a>
+              <a class="nav-link" href="#">Statystyki</a>
+              
+            </div>
+          </div>
+        </div>
+      </nav>
+
+
+
+
+    <div class="container">
+
+            <!-- Button trigger modal -->
+  
+    
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Karta dodawania</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="/add"  method="post">
+                        <div class="modal-body">
+                            <div class="row" >
+                                <span class="col-8 pe-0">
+                                    <input type="number" name='amount' class="form-control float-left" placeholder="Kwota">
+                                </span>
+                                <div class="col-4 ps-1" required>
+                                    <select class="form-select" name='currency'>
+                                        <option selected>PLN</option>
+                                        <option>USD</option>
+                                        <option>EUR</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                    Please select a valid state.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                            <input type="text" class="form-control my-1" placeholder="Nazwa" name='name'>
+                            <input type="text" class="form-control my-1" placeholder="Opis" name='description'>
+                            <input type="date" class="form-control mt-1 mb-3" name='date'>
+                            <input type="radio" class="btn-check" name='kind' id="success-outlined" autocomplete="off" value="income" checked>
+                            <label class="btn btn-outline-success" for="success-outlined">Przychód</label>
+                            <input type="radio" class="btn-check" name='kind' id="danger-outlined" autocomplete="off" value="outcome">
+                            <label class="btn btn-outline-danger" for="danger-outlined">Koszt</label>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                            <button type="submit" class="btn btn-primary">Dodaj</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm text-white bg-primary">
+                    <div class="card-header text-center">Bilans</div>
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{balance_info['balance']}}</h4>
+                    </div>
+                </div>
+
+
+
+                <div class="col-sm text-white bg-success">
+                    <div class="card-header text-center">Przychody</div>
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{balance_info['income']}}</h4>
+                    </div>
+                </div>
+                <div class="col-sm text-white bg-danger">
+                    <div class="card-header text-center">Wydatki</div>
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{balance_info['outcome']}}</h4>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="container p-0">
+            <h2 class="text-center my-2">Zestawienie przychodów i wydatków</h2>
+            <button type="button" class="w-100 my-2 btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Dodaj</button>
+            <table class="table table-bordered table-hover">
+                <thead class="thead">
+                    <tr>
+                        <th>+ / -</th>
+                        <th>Nazwa</th>
+                        <th>Wartość</th>
+                        <th>Data</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for revenue in revenue_list %}               
+
+                    <div class="modal fade" id="edit-button-{{revenue['id']}}" tabindex="-1" aria-labelledby="edit-button" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-dark" id="edit-button">Karta edytowania</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="/edit/{{revenue['id']}}"  method="post">
+                                    <div class="modal-body">
+                                        <div class="row" >
+                                            <span class="col-8 pe-0">
+                                                <input type="number" class="form-control float-left" placeholder="Kwota" value = "{{revenue['amount']}}" name = 'amount'>
+                                            </span>
+                                            <div class="col-4 ps-1">
+                                                <select class="form-select" id="validationCustom04" name = 'currency' required>
+                                                        <option {% if revenue['currency']=='PLN' %}selected{% endif %}>PLN</option>
+                                                        <option {% if revenue['currency']=='USD' %}selected{% endif %}>USD</option>
+                                                        <option {% if revenue['currency']=='EUR' %}selected{% endif %}>EUR</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    Please select a valid state.
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+
+                                        
+                                        <input type="text" class="form-control my-1" placeholder="Nazwa" value = "{{revenue['name']}}" name = 'name'>
+                                        <input type="text" class="form-control my-1" placeholder="Opis" value = "{{revenue['description']}}" name = 'description'>
+                                        <input type="date" class="form-control mt-1 mb-3" value = "{{revenue['date']}}" name = 'date'>
+                                        <input type="radio" class="btn-check" id="przychod{{revenue['id']}}" autocomplete="off" name="kind" value='income' {% if revenue['kind'] == 'income' %} checked {% endif %}>
+                                        <label class="btn btn-outline-success" for="przychod{{revenue['id']}}">Przychód</label>
+                                        <input type="radio" class="btn-check" id="koszt{{revenue['id']}}" autocomplete="off" name="kind" value='outcome' {% if revenue['kind'] == 'outcome' %} checked {% endif %}>
+                                        <label class="btn btn-outline-danger" for="koszt{{revenue['id']}}">Koszt</label>
+
+                                        
+                                    </div>                                
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% if revenue['kind'] == 'income' %} <tr class="table-success">
+                    {% elif revenue['kind'] == 'outcome' %} <tr class="table-danger">{% endif %}
+                        {% if revenue['kind'] == 'income' %}<th>Przychód</th>
+                        {% elif revenue['kind'] == 'outcome' %}<th>Koszt</th> {% endif %}
+                        <th>{{revenue['name']}}</th>
+                        <th>{{revenue['amount']}} {{revenue['currency']}}</th>
+                        <th class='d-flex justify-content-between'>{{revenue['date']}} 
+                            <span>
+                                <a class="btn btn-sm" href="/delete/{{revenue['id']}}"><i class="fas fa-trash-alt"></i></a>
+                                <button class="btn btn-sm " data-bs-toggle="modal" data-bs-target="#edit-button-{{revenue['id']}}"><i class="fas fa-edit"></i></button>
+                            </span>
+                        </th>
+                    </tr>
+            
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+</body>
+</html>
