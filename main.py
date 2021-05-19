@@ -7,6 +7,7 @@ app.secret_key = "hello"
 
 @app.route("/")
 def main():
+    
     revenue_list = load_database()
     revenue_list = sort_through_date(revenue_list)
     balance_info = balance_counter(revenue_list)
@@ -43,9 +44,27 @@ def edit(num):
         #category = request.form["category"]
         date = request.form["date"]
         update_from_database(num, name, amount, currency, kind, description, date)
-        print(kind)
     
     return redirect(url_for("main"))
+
+
+@app.route("/stats", methods = ["POST", "GET"])
+def stats():
+
+    revenue_list = load_database()
+    revenue_list = sort_through_date(revenue_list)
+    balance_info = balance_counter(revenue_list)
+    chart_info = data_for_chart(revenue_list)
+
+    dates = [object['date'] for object in chart_info]
+    balance = [object['balance'] for object in chart_info]
+    outcome = ['Przychody [PLN]', 'Koszty [PLN]']
+    income = [balance_info['income'], balance_info['outcome']]
+
+
+    return render_template("stats.html", outcome=outcome, income=income, dates = dates, balance = balance)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

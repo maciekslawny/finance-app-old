@@ -113,3 +113,34 @@ def balance_counter(revenue_list):
 def sort_through_date(revenue_list):
     final_revenue_list =  sorted(revenue_list, key=lambda k: k['date'], reverse=True) 
     return final_revenue_list
+
+
+def data_for_chart(revenue_list):
+    revenue_list.reverse()
+    data_list = []
+    balance = 0
+    for object in revenue_list:
+        income = 0
+        outcome = 0
+        if object['kind'] == 'income':
+            income = object['amount']
+        elif object['kind'] == 'outcome':
+            outcome = object['amount']
+        balance = balance + income - outcome
+        new_object = {
+            'date': object['date'],
+            'balance': balance
+        }
+        data_list.append(new_object)
+
+    data_list.reverse()
+    final_data_list = []
+    # Tworzy listę bez powtórzonych dat (zostawia zaktualizowaną)
+    for item in data_list:
+        if item['date'] not in [object['date'] for object in final_data_list]:
+            final_data_list.append(item)
+    revenue_list.reverse()
+    final_data_list.reverse()
+    return final_data_list
+
+
